@@ -1,0 +1,85 @@
+<Window x:Class="MyApp.App.TransactionDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Transaction" Height="600" Width="550"
+        Background="#1E1E1E"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Window.Resources>
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <TextBlock Text="Date:" FontWeight="Bold"/>
+                <DatePicker x:Name="TransactionDatePicker" SelectedDate="{Binding TransactionDate}" Margin="0,0,0,15"/>
+
+                <TextBlock Text="Transaction Type:" FontWeight="Bold"/>
+                <ComboBox x:Name="TransactionTypeComboBox"
+                          SelectedValue="{Binding TransactionType}"
+                          SelectedValuePath="Content"
+                          SelectionChanged="TransactionTypeComboBox_SelectionChanged"
+                          Margin="0,0,0,15">
+                    <ComboBoxItem Content="Income"/>
+                    <ComboBoxItem Content="Expense"/>
+                    <ComboBoxItem Content="Transfer"/>
+                </ComboBox>
+
+                <!-- Income / Expense fields -->
+                <StackPanel x:Name="AccountPanel" Margin="0,0,0,0">
+                    <TextBlock Text="Account:" FontWeight="Bold"/>
+                    <ComboBox x:Name="AccountComboBox"
+                              DisplayMemberPath="Name"
+                              SelectedValuePath="Id"
+                              SelectedValue="{Binding AccountId}"/>
+                </StackPanel>
+
+                <!-- Transfer fields -->
+                <StackPanel x:Name="TransferPanel" Margin="0,0,0,0" Visibility="Collapsed">
+                    <TextBlock Text="Source Account:" FontWeight="Bold"/>
+                    <ComboBox x:Name="SourceAccountComboBox"
+                              DisplayMemberPath="Name"
+                              SelectedValuePath="Id"/>
+                    <TextBlock Text="Destination Account:" FontWeight="Bold" Margin="0,10,0,5"/>
+                    <ComboBox x:Name="DestinationAccountComboBox"
+                              DisplayMemberPath="Name"
+                              SelectedValuePath="Id"
+                              Margin="0,0,0,15"/>
+                </StackPanel>
+
+                <TextBlock x:Name="CategoryLabel" Text="Category:" FontWeight="Bold"/>
+                <ComboBox x:Name="CategoryComboBox"
+                          DisplayMemberPath="Name"
+                          SelectedValuePath="Id"
+                          SelectedValue="{Binding CategoryId}"/>
+
+                <TextBlock Text="Amount:" FontWeight="Bold"/>
+                <TextBox x:Name="AmountTextBox" PreviewTextInput="AmountTextBox_PreviewTextInput"/>
+
+                <TextBlock Text="Description:" FontWeight="Bold"/>
+                <TextBox x:Name="DescriptionTextBox" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Text="Reference No:" FontWeight="Bold"/>
+                <TextBox x:Name="ReferenceNoTextBox" Text="{Binding ReferenceNo, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Text="Notes:" FontWeight="Bold"/>
+                <TextBox x:Name="NotesTextBox" Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" 
+                         Height="80" TextWrapping="Wrap" AcceptsReturn="True"/>
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+            <Button Content="Save" Width="80" Margin="0,0,10,0" Click="Save_Click"/>
+            <Button Content="Cancel" Width="80" Click="Cancel_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

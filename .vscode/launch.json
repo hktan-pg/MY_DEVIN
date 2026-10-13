@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Core Launch (WPF)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/MyApp.App/bin/Debug/net9.0-windows/MyApp.App.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/MyApp.App",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "doNotConfirm": true,
+                "action": "externalTerminate"
+            }
+        }
+    ]
+}

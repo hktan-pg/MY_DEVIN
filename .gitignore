@@ -1,0 +1,43 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+build/
+bin/
+obj/
+
+# Test results
+[Tt]est[Rr]esult*/
+*.testrunsettings
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+build.log
+build-err.log
+test-out.log
+test-err.log
+
+# PID files
+*.pid
+.build-pid
+.test-pid
+
+# Temporary files
+.tmp/
+*.tmp

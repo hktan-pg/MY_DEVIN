@@ -1,0 +1,196 @@
+<UserControl x:Class="MyApp.App.RemindersView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="700" d:DesignWidth="1000">
+    <UserControl.Resources>
+        <!-- Shared styling for the three reminder lists -->
+        <Style x:Key="ReminderGridStyle" TargetType="DataGrid">
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="CanUserDeleteRows" Value="False"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="Background" Value="#1E1E1E"/>
+            <Setter Property="Foreground" Value="#E0E0E0"/>
+            <Setter Property="BorderBrush" Value="#3E3E42"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#3E3E42"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="RowBackground" Value="#1E1E1E"/>
+            <Setter Property="AlternatingRowBackground" Value="#252526"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ColumnHeaderStyle">
+                <Setter.Value>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#2D2D2D"/>
+                        <Setter Property="Foreground" Value="#E0E0E0"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Padding" Value="8"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="CellStyle">
+                <Setter.Value>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Padding" Value="8,4"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="RowStyle">
+                <Setter.Value>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Foreground" Value="#E0E0E0"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#3D3D3D"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Overdue reminders are highlighted in red -->
+        <Style x:Key="OverdueReminderGridStyle" TargetType="DataGrid" BasedOn="{StaticResource ReminderGridStyle}">
+            <Setter Property="RowStyle">
+                <Setter.Value>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Foreground" Value="#E57373"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#3D3D3D"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#E0E0E0"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+
+        <Style x:Key="OverdueSectionHeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource SectionHeaderStyle}">
+            <Setter Property="Foreground" Value="#E57373"/>
+        </Style>
+
+        <Style x:Key="EmptySectionStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#808080"/>
+            <Setter Property="Margin" Value="2,0,0,18"/>
+            <Setter Property="Visibility" Value="Collapsed"/>
+        </Style>
+
+        <Style x:Key="OverdueEmptyStyle" TargetType="TextBlock" BasedOn="{StaticResource EmptySectionStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding HasOverdueReminders}" Value="False">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="UpcomingEmptyStyle" TargetType="TextBlock" BasedOn="{StaticResource EmptySectionStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding HasUpcomingReminders}" Value="False">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="CompletedEmptyStyle" TargetType="TextBlock" BasedOn="{StaticResource EmptySectionStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding HasCompletedReminders}" Value="False">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="#1E1E1E">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,20,20,10">
+            <TextBlock Text="Reminders" FontSize="24" FontWeight="Bold" Foreground="#E0E0E0" VerticalAlignment="Center"/>
+            <TextBlock Text="Car &amp; Finance" FontSize="14" Foreground="#B0B0B0" VerticalAlignment="Center" Margin="15,0,0,0"/>
+        </StackPanel>
+
+        <!-- Toolbar -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="20,0,20,10" HorizontalAlignment="Right">
+            <Button Content="Add Reminder" Command="{Binding AddReminderCommand}" Width="120" Margin="0,0,10,0"/>
+            <Button Content="Edit" Command="{Binding EditReminderCommand}" Width="80" Margin="0,0,10,0"/>
+            <Button Content="Mark Completed" Command="{Binding MarkCompletedCommand}" Width="130" Margin="0,0,10,0"/>
+            <Button Content="Reopen" Command="{Binding ReopenCommand}" Width="80" Margin="0,0,10,0"/>
+            <Button Content="Refresh" Command="{Binding LoadRemindersCommand}" Width="80"/>
+        </StackPanel>
+
+        <!-- OVERDUE / UPCOMING / COMPLETED -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                      Margin="20,0,20,20">
+            <StackPanel>
+                <!-- OVERDUE (most overdue first) -->
+                <TextBlock Text="{Binding OverdueHeaderText}" Style="{StaticResource OverdueSectionHeaderStyle}"/>
+                <DataGrid x:Name="OverdueGrid"
+                          ItemsSource="{Binding OverdueReminders}"
+                          SelectedItem="{Binding SelectedOverdue}"
+                          Style="{StaticResource OverdueReminderGridStyle}"
+                          MinHeight="90" MaxHeight="150" Margin="0,0,0,6">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Title" Binding="{Binding Reminder.Title}" Width="*"/>
+                        <DataGridTextColumn Header="Reminder Date" Binding="{Binding Reminder.ReminderDate, StringFormat=dd/MM/yyyy}" Width="115"/>
+                        <DataGridTextColumn Header="Reminder Type" Binding="{Binding Reminder.ReminderType}" Width="130"/>
+                        <DataGridTextColumn Header="Status" Binding="{Binding StatusText}" Width="90"/>
+                        <DataGridTextColumn Header="Notes" Binding="{Binding Reminder.Notes, TargetNullValue='-'}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <TextBlock Text="No overdue reminders" Style="{StaticResource OverdueEmptyStyle}"/>
+
+                <!-- UPCOMING (soonest first) -->
+                <TextBlock Text="{Binding UpcomingHeaderText}" Style="{StaticResource SectionHeaderStyle}"/>
+                <DataGrid x:Name="UpcomingGrid"
+                          ItemsSource="{Binding UpcomingReminders}"
+                          SelectedItem="{Binding SelectedUpcoming}"
+                          Style="{StaticResource ReminderGridStyle}"
+                          MinHeight="90" MaxHeight="150" Margin="0,0,0,6">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Title" Binding="{Binding Reminder.Title}" Width="*"/>
+                        <DataGridTextColumn Header="Reminder Date" Binding="{Binding Reminder.ReminderDate, StringFormat=dd/MM/yyyy}" Width="115"/>
+                        <DataGridTextColumn Header="Reminder Type" Binding="{Binding Reminder.ReminderType}" Width="130"/>
+                        <DataGridTextColumn Header="Status" Binding="{Binding StatusText}" Width="90"/>
+                        <DataGridTextColumn Header="Notes" Binding="{Binding Reminder.Notes, TargetNullValue='-'}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <TextBlock Text="No upcoming reminders" Style="{StaticResource UpcomingEmptyStyle}"/>
+
+                <!-- COMPLETED (most recent first) -->
+                <TextBlock Text="{Binding CompletedHeaderText}" Style="{StaticResource SectionHeaderStyle}"/>
+                <DataGrid x:Name="CompletedGrid"
+                          ItemsSource="{Binding CompletedReminders}"
+                          SelectedItem="{Binding SelectedCompleted}"
+                          Style="{StaticResource ReminderGridStyle}"
+                          MinHeight="90" MaxHeight="150" Margin="0,0,0,6">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Title" Binding="{Binding Reminder.Title}" Width="*"/>
+                        <DataGridTextColumn Header="Reminder Date" Binding="{Binding Reminder.ReminderDate, StringFormat=dd/MM/yyyy}" Width="115"/>
+                        <DataGridTextColumn Header="Reminder Type" Binding="{Binding Reminder.ReminderType}" Width="130"/>
+                        <DataGridTextColumn Header="Status" Binding="{Binding StatusText}" Width="90"/>
+                        <DataGridTextColumn Header="Notes" Binding="{Binding Reminder.Notes, TargetNullValue='-'}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <TextBlock Text="No completed reminders" Style="{StaticResource CompletedEmptyStyle}"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
